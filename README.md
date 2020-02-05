@@ -1,7 +1,7 @@
-# POS LITE NG
+# NG SALES ITO
 
 
-POS LITE es un motor de un punto de venta simple que cubre los elementos necesarios para implementarlo en tu changarro, negocio o para actualizar y ajustarlo a tu necesidades.
+NG SALES ITO es un motor de un punto de venta simple que cubre los elementos necesarios para implementarlo en tu changarro, negocio o para actualizar y ajustarlo a tu necesidades.
 
 ## Instalacion
 
