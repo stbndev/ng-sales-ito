@@ -18,6 +18,8 @@ namespace service.Controllers
     public class DocFileController : ApiController
     {
         public static DropboxClient dbx { get; set; }
+        public static byte[] bytes { get; set; }
+        public static HttpPostedFile MyProperty { get; set; }
 
         async Task Upload(DropboxClient dbx, string folder, string file, string content)
         {
@@ -36,24 +38,13 @@ namespace service.Controllers
             var httpRequest = HttpContext.Current.Request;
             string tmpname = PosUtil.ConvertToTimestamp(DateTime.Now).ToString();
 
-            var task = Task.Run((Func<Task>)_dbxRun);
-            task.Wait();
-
-            var task2 = Task.Run((Func<Task>)ListRootFolder);
-            task2.Wait();
-
-            
-
             try
             {
-
-
                 if (httpRequest.Files.Count > 0)
                 {
                     var docfiles = new List<string>();
                     foreach (string file in httpRequest.Files)
                     {
-
                         var postedFile = httpRequest.Files[file];
                         //var filePath = HttpContext.Current.Server.MapPath("~/images/" + postedFile.FileName);
                         tmpname = tmpname + Path.GetExtension(postedFile.FileName);
@@ -65,6 +56,22 @@ namespace service.Controllers
                         postedFile.SaveAs(filePath);
                         docfiles.Add(filePath);
 
+
+
+                        // start 
+                        
+                        MyProperty = postedFile;
+
+                        var tmp =  Task.Run((Func<Task>)_dbxRun);
+                        tmp.Wait();
+                        
+
+                        using (var stream = new MemoryStream())
+                        {
+                            postedFile.InputStream.CopyTo(stream);
+                            bytes = stream.ToArray();
+                        }
+                        // end
                     }
                     result = Request.CreateResponse(HttpStatusCode.Created, docfiles);
                 }
@@ -98,15 +105,37 @@ namespace service.Controllers
                     if (checkFolderExist)
                         await dbx.Files.CreateFolderAsync("/products", false);
 
+
+                    //using (var mem = new MemoryStream(Encoding.UTF8.GetBytes("content")))
+                    //{
+                    //    var updated = await dbx.Files.UploadAsync(
+                    //        "/products" + "/" + "file.txt",
+                    //        WriteMode.Overwrite.Instance,
+                    //        body: mem);
+                    //    Console.WriteLine("Saved {0}/{1} rev {2}", "products", "file.txt", updated.Rev);
+                    //}
+
+
                     
-                    using (var mem = new MemoryStream(Encoding.UTF8.GetBytes("content")))
-                    {
-                        var updated = await dbx.Files.UploadAsync(
-                            "/products" + "/" + "file.txt",
-                            WriteMode.Overwrite.Instance,
-                            body: mem);
-                        Console.WriteLine("Saved {0}/{1} rev {2}", "products", "file.txt", updated.Rev);
-                    }
+                    var _tmp = await dbx.Files.UploadAsync("/products/dbxtmp.png", WriteMode.Overwrite.Instance, body: MyProperty.InputStream);
+
+                    //using (var stream = new MemoryStream())
+                    //{
+                    //    MyProperty.InputStream.CopyTo(stream);
+                    //    bytes = stream.ToArray();
+                    //}
+
+                    //using (var mem = new MemoryStream(bytes))
+                    //{
+                    //    var updated = await dbx.Files.UploadAsync(
+                    //        "/products" + "/" + "file2.txt",
+                    //        WriteMode.Overwrite.Instance,
+                    //        body: MyProperty.InputStream);
+                    //}
+
+
+
+
 
                 }
                 catch (Exception ex)
@@ -116,7 +145,7 @@ namespace service.Controllers
             }
 
 
-            
+
 
         }
         async Task ListRootFolder()
