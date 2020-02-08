@@ -17,21 +17,28 @@ namespace service.Controllers
 {
     public class DocFileController : ApiController
     {
-        public static DropboxClient dbx { get; set; }
-        public static byte[] bytes { get; set; }
-        public static HttpPostedFile MyProperty { get; set; }
+        private static byte[] bytes;
 
-        async Task Upload(DropboxClient dbx, string folder, string file, string content)
-        {
-            using (var mem = new MemoryStream(Encoding.UTF8.GetBytes(content)))
-            {
-                var updated = await dbx.Files.UploadAsync(
-                    folder + "/" + file,
-                    WriteMode.Overwrite.Instance,
-                    body: mem);
-                Console.WriteLine("Saved {0}/{1} rev {2}", folder, file, updated.Rev);
-            }
-        }
+        // private static DropboxClient dbx;
+
+        private static DropboxClient _dbx { get ; set ; }
+        private static byte[] _bytes { get => bytes; set => bytes = value; }
+        private static HttpPostedFile _hpf { get; set; }
+        private static string _fileName { get; set; }
+        private static bool _flag { get; set; }
+
+
+        //async Task Upload(DropboxClient dbx, string folder, string file, string content)
+        //{
+        //    using (var mem = new MemoryStream(Encoding.UTF8.GetBytes(content)))
+        //    {
+        //        var updated = await dbx.Files.UploadAsync(
+        //            folder + "/" + file,
+        //            WriteMode.Overwrite.Instance,
+        //            body: mem);
+        //        Console.WriteLine("Saved {0}/{1} rev {2}", folder, file, updated.Rev);
+        //    }
+        //}
         public HttpResponseMessage Post()
         {
             HttpResponseMessage result = null;
@@ -46,31 +53,29 @@ namespace service.Controllers
                     foreach (string file in httpRequest.Files)
                     {
                         var postedFile = httpRequest.Files[file];
+
+                        
+
                         //var filePath = HttpContext.Current.Server.MapPath("~/images/" + postedFile.FileName);
                         tmpname = tmpname + Path.GetExtension(postedFile.FileName);
+                        _fileName = tmpname;
                         //var filePath = HttpContext.Current.Server.MapPath("~/images/" + tmpname);
                         //postedFile.SaveAs(filePath);
 
-                        string fname = Path.GetFileName(postedFile.FileName);
-                        string filePath = HttpContext.Current.Server.MapPath(Path.Combine("~/images", fname));
-                        postedFile.SaveAs(filePath);
-                        docfiles.Add(filePath);
+                        // string fname = Path.GetFileName(postedFile.FileName);
+                        // string filePath = HttpContext.Current.Server.MapPath(Path.Combine("~/images", fname));
+                        // postedFile.SaveAs(filePath);
+                        docfiles.Add(_fileName);
 
 
 
                         // start 
-                        
-                        MyProperty = postedFile;
 
-                        var tmp =  Task.Run((Func<Task>)_dbxRun);
+                        _hpf = postedFile;
+
+                        var tmp = Task.Run((Func<Task>)_dbxRun);
                         tmp.Wait();
-                        
 
-                        using (var stream = new MemoryStream())
-                        {
-                            postedFile.InputStream.CopyTo(stream);
-                            bytes = stream.ToArray();
-                        }
                         // end
                     }
                     result = Request.CreateResponse(HttpStatusCode.Created, docfiles);
@@ -94,63 +99,39 @@ namespace service.Controllers
         static async Task _dbxRun()
         {
 
-            using (dbx = new DropboxClient("piuQiwTZUlwAAAAAAAC5sxZkD1aF50J-4l0SuJ5GwdmvKrKOTkrQKDVmhRXW0xmu"))
+            using (_dbx = new DropboxClient("piuQiwTZUlwAAAAAAAC5sxZkD1aF50J-4l0SuJ5GwdmvKrKOTkrQKDVmhRXW0xmu"))
             {
-
-                var full = await dbx.Users.GetCurrentAccountAsync();
+                string remotePath = "/products/" + _fileName;
+                var full = await _dbx.Users.GetCurrentAccountAsync();
                 try
                 {
-                    var list = await dbx.Files.ListFolderAsync(string.Empty);
+                    var list = await _dbx.Files.ListFolderAsync(string.Empty);
                     var checkFolderExist = list.Entries.Where(x => x.Name == "products").FirstOrDefault() == null;
                     if (checkFolderExist)
-                        await dbx.Files.CreateFolderAsync("/products", false);
-
-
-                    //using (var mem = new MemoryStream(Encoding.UTF8.GetBytes("content")))
-                    //{
-                    //    var updated = await dbx.Files.UploadAsync(
-                    //        "/products" + "/" + "file.txt",
-                    //        WriteMode.Overwrite.Instance,
-                    //        body: mem);
-                    //    Console.WriteLine("Saved {0}/{1} rev {2}", "products", "file.txt", updated.Rev);
-                    //}
-
+                        await _dbx.Files.CreateFolderAsync("/products", false);
 
                     
-                    var _tmp = await dbx.Files.UploadAsync("/products/dbxtmp.png", WriteMode.Overwrite.Instance, body: MyProperty.InputStream);
-
-                    //using (var stream = new MemoryStream())
-                    //{
-                    //    MyProperty.InputStream.CopyTo(stream);
-                    //    bytes = stream.ToArray();
-                    //}
-
-                    //using (var mem = new MemoryStream(bytes))
-                    //{
-                    //    var updated = await dbx.Files.UploadAsync(
-                    //        "/products" + "/" + "file2.txt",
-                    //        WriteMode.Overwrite.Instance,
-                    //        body: MyProperty.InputStream);
-                    //}
-
-
-
-
-
+                    var _tmp = await _dbx.Files.UploadAsync(remotePath,
+                                      //WriteMode.Overwrite.Instance,
+                                      body: _hpf.InputStream);
+              
+                    // var _tmp2 =_dbx.Sharing.CreateSharedLinkWithSettingsAsync("/products/" + _fileName);
+                    var result = await _dbx.Sharing.CreateSharedLinkWithSettingsAsync(remotePath);
+                    var url = result.Url;
+                    url = url.Replace("www", "dl");
+                    url = url.Replace("?dl=0", "");
+                    _flag = true;
+                    Console.WriteLine("test");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
             }
-
-
-
-
         }
         async Task ListRootFolder()
         {
-            var list = await dbx.Files.ListFolderAsync(string.Empty);
+            var list = await _dbx.Files.ListFolderAsync(string.Empty);
 
             // show folders then files
             foreach (var item in list.Entries.Where(i => i.IsFolder))
