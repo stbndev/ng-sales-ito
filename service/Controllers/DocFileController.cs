@@ -12,21 +12,24 @@ using Dropbox.Api;
 using System.Threading.Tasks;
 using System.Text;
 using Dropbox.Api.Files;
+using System.Configuration;
 
 namespace service.Controllers
 {
     public class DocFileController : ApiController
     {
-        private static byte[] bytes;
+        // private static byte[] bytes;
 
         // private static DropboxClient dbx;
 
-        private static DropboxClient _dbx { get ; set ; }
-        private static byte[] _bytes { get => bytes; set => bytes = value; }
+        private static DropboxClient _dbx { get; set; }
+        private static byte[] _bytes { get; set; }
         private static HttpPostedFile _hpf { get; set; }
         private static string _fileName { get; set; }
         private static bool _flag { get; set; }
-
+        private static string folderDBX { get; set; }
+        private static string tokenDBX { get; set; }
+        private static string linkDBX { get; set; }
 
         //async Task Upload(DropboxClient dbx, string folder, string file, string content)
         //{
@@ -39,58 +42,77 @@ namespace service.Controllers
         //        Console.WriteLine("Saved {0}/{1} rev {2}", folder, file, updated.Rev);
         //    }
         //}
+        [HttpPost]
+        [Route("api/products/upload")]
+        public string MyFileUpload()
+        {
+            var request = HttpContext.Current.Request;
+            var filePath = "C:\\temp\\" + request.Headers["filename"];
+            using (var fs = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+            {
+                request.InputStream.CopyTo(fs);
+            }
+            return "uploaded";
+        }
+        //public async Task<IHttpActionResult> Uploadfile()
+        //{
+        //    var request = HttpContext.Current.Request;
+        //    var filePath = "C:\\temp\\" + request.Headers["filename"];
+
+        //    if (!Request.Content.IsMimeMultipartContent())
+        //        throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+
+        //    var provider = new MultipartMemoryStreamProvider();
+        //    await Request.Content.ReadAsMultipartAsync(provider);
+        //    foreach (var file in provider.Contents)
+        //    {
+        //        var filename = file.Headers.ContentDisposition.FileName.Trim('\"');
+        //        var buffer = await file.ReadAsByteArrayAsync();
+        //        //Do whatever you want with filename and its binary data.
+        //    }
+
+        //    return Ok();
+        //}
+
         public HttpResponseMessage Post()
         {
             HttpResponseMessage result = null;
             var httpRequest = HttpContext.Current.Request;
             string tmpname = PosUtil.ConvertToTimestamp(DateTime.Now).ToString();
 
-            try
+            if (httpRequest.Files.Count > 0)
             {
-                if (httpRequest.Files.Count > 0)
+                var docfiles = new List<string>();
+                foreach (string file in httpRequest.Files)
                 {
-                    var docfiles = new List<string>();
-                    foreach (string file in httpRequest.Files)
-                    {
-                        var postedFile = httpRequest.Files[file];
+                    var postedFile = httpRequest.Files[file];
 
-                        
+                    //var filePath = HttpContext.Current.Server.MapPath("~/images/" + postedFile.FileName);
+                    tmpname = tmpname + Path.GetExtension(postedFile.FileName);
+                    _fileName = tmpname;
+                    //var filePath = HttpContext.Current.Server.MapPath("~/images/" + tmpname);
+                    //postedFile.SaveAs(filePath);
 
-                        //var filePath = HttpContext.Current.Server.MapPath("~/images/" + postedFile.FileName);
-                        tmpname = tmpname + Path.GetExtension(postedFile.FileName);
-                        _fileName = tmpname;
-                        //var filePath = HttpContext.Current.Server.MapPath("~/images/" + tmpname);
-                        //postedFile.SaveAs(filePath);
+                    // string fname = Path.GetFileName(postedFile.FileName);
+                    // string filePath = HttpContext.Current.Server.MapPath(Path.Combine("~/images", fname));
+                    // postedFile.SaveAs(filePath);
+                    docfiles.Add(_fileName);
 
-                        // string fname = Path.GetFileName(postedFile.FileName);
-                        // string filePath = HttpContext.Current.Server.MapPath(Path.Combine("~/images", fname));
-                        // postedFile.SaveAs(filePath);
-                        docfiles.Add(_fileName);
+                    // start 
 
+                    _hpf = postedFile;
 
-
-                        // start 
-
-                        _hpf = postedFile;
-
-                        var tmp = Task.Run((Func<Task>)_dbxRun);
-                        tmp.Wait();
-
-                        // end
-                    }
-                    result = Request.CreateResponse(HttpStatusCode.Created, docfiles);
+                    var tmp = Task.Run((Func<Task>)_dbxRun);
+                    tmp.Wait();
+                    // end
                 }
-                else
-                {
-                    result = Request.CreateResponse(HttpStatusCode.BadRequest);
-                }
+                result = Request.CreateResponse(HttpStatusCode.Created, linkDBX);
             }
-            catch (Exception ex)
+            else
             {
-
-                result = Request.CreateResponse(HttpStatusCode.Conflict, ex.Message);
-
+                result = Request.CreateResponse(HttpStatusCode.BadRequest);
             }
+
             return result;
         }
 
@@ -98,35 +120,36 @@ namespace service.Controllers
 
         static async Task _dbxRun()
         {
+            folderDBX = ConfigurationManager.AppSettings["dbxproducts"];
+            tokenDBX = ConfigurationManager.AppSettings["dbxcredentials"];
 
-            using (_dbx = new DropboxClient("piuQiwTZUlwAAAAAAAC5sxZkD1aF50J-4l0SuJ5GwdmvKrKOTkrQKDVmhRXW0xmu"))
+            try
             {
-                string remotePath = "/products/" + _fileName;
-                var full = await _dbx.Users.GetCurrentAccountAsync();
-                try
+                using (_dbx = new DropboxClient(tokenDBX))
                 {
+                    string remotePath = string.Concat("/", folderDBX, "/", _fileName);
+                    // var full = await _dbx.Users.GetCurrentAccountAsync();
                     var list = await _dbx.Files.ListFolderAsync(string.Empty);
                     var checkFolderExist = list.Entries.Where(x => x.Name == "products").FirstOrDefault() == null;
                     if (checkFolderExist)
-                        await _dbx.Files.CreateFolderAsync("/products", false);
+                        await _dbx.Files.CreateFolderAsync("/" + folderDBX, false);
 
-                    
                     var _tmp = await _dbx.Files.UploadAsync(remotePath,
-                                      //WriteMode.Overwrite.Instance,
-                                      body: _hpf.InputStream);
-              
-                    // var _tmp2 =_dbx.Sharing.CreateSharedLinkWithSettingsAsync("/products/" + _fileName);
+                                                            body: _hpf.InputStream);
+
                     var result = await _dbx.Sharing.CreateSharedLinkWithSettingsAsync(remotePath);
                     var url = result.Url;
                     url = url.Replace("www", "dl");
                     url = url.Replace("?dl=0", "");
+                    linkDBX = url;
                     _flag = true;
-                    Console.WriteLine("test");
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                // TODO
+                // put nlog config here
+                Console.WriteLine(ex.Message);
             }
         }
         async Task ListRootFolder()
