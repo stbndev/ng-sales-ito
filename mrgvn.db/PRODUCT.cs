@@ -34,6 +34,9 @@ namespace mrgvn.db
         public decimal unitary_cost { get; set; }
 
         public int existence { get; set; }
+        //TODO: add column pathimg in script for db
+        public string pathimg { get; set; }
+
 
         public virtual CSTATU CSTATU { get; set; }
 

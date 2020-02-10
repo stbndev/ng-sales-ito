@@ -1,21 +1,24 @@
 ﻿using AutoMapper;
+using Dropbox.Api;
 using mrgvn.db;
 using posrepository;
 using posrepository.DTO;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
-
 namespace service.Controllers
 {
     public class ProductsController : ApiController
     {
         private IProducts ng;
         public ProductsController(IProducts products) { ng = products; }
-
 
         [HttpDelete]
         ///[ResponseType(typeof(UsuarioDTO))]
@@ -230,5 +233,9 @@ namespace service.Controllers
 
             return Request.CreateResponse<ResponseModel>(HttpStatusCode.OK, rm);
         }
+
+       
+
+
     }
 }

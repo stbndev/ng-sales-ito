@@ -105,29 +105,14 @@ namespace service.Controllers
 
             if (httpRequest.Files.Count > 0)
             {
-                var docfiles = new List<string>();
                 foreach (string file in httpRequest.Files)
                 {
                     var postedFile = httpRequest.Files[file];
-
-                    //var filePath = HttpContext.Current.Server.MapPath("~/images/" + postedFile.FileName);
                     tmpname = tmpname + Path.GetExtension(postedFile.FileName);
                     dbx.fileName = tmpname;
-                    //var filePath = HttpContext.Current.Server.MapPath("~/images/" + tmpname);
-                    //postedFile.SaveAs(filePath);
-
-                    // string fname = Path.GetFileName(postedFile.FileName);
-                    // string filePath = HttpContext.Current.Server.MapPath(Path.Combine("~/images", fname));
-                    // postedFile.SaveAs(filePath);
-                    docfiles.Add(dbx.fileName);
-
-                    // start 
-
                     dbx.hpf = postedFile;
-
                     var tmp = Task.Run((Func<Task>)_dbxRun);
                     tmp.Wait();
-                    // end
                 }
                 result = Request.CreateResponse(HttpStatusCode.Created, dbx.linkDBX);
             }

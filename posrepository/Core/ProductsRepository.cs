@@ -18,6 +18,8 @@ namespace posrepository
         PRODUCT Update(ProductDTO dto);
         PRODUCTENTRy UpdateEntry(EntryDTO dto);
 
+        bool ImgAddSet(ProductDTO dto);
+
         bool Delete(int id);
         bool DeleteEntry(int id);
     }
@@ -236,6 +238,7 @@ namespace posrepository
                         p.unitary_price = dto.unitary_price;
                         p.unitary_cost = dto.unitary_cost;
                         p.existence = dto.existence;
+                        p.pathimg = dto.pathimg;
                         context.Entry(p).State = EntityState.Added;
                         context.SaveChanges();
                         Logger.Info("{0} {1} {2} {3} {4} {5} {6} ", p.id, p.name, p.barcode, p.idcstatus, p.unitary_price, p.unitary_cost, p.existence);
@@ -316,6 +319,7 @@ namespace posrepository
                     item.unitary_price = dto.unitary_price;
                     item.unitary_cost = dto.unitary_cost == 0 ? item.unitary_cost : dto.unitary_cost;
                     item.existence = dto.existence;
+                    item.pathimg = dto.pathimg;
                     context.Entry(item).State = EntityState.Modified;
                     context.SaveChanges();
                     Logger.Info("Product Update {0} ", item.id);
@@ -329,6 +333,34 @@ namespace posrepository
             return item;
         }
 
-
+        public bool ImgAddSet(ProductDTO dto)
+        {
+            bool flag = false;
+            PRODUCT item = new PRODUCT();
+            if (dto.idproducts <= 0)
+                return false;
+            try
+            {
+                using (var context = new posContext())
+                {
+                    item = Read(id: dto.idproducts).FirstOrDefault();
+                    //item.name = dto.name;
+                    //item.barcode = dto.barcode;
+                    //item.idcstatus = dto.idcstatus;
+                    //item.unitary_price = dto.unitary_price;
+                    //item.unitary_cost = dto.unitary_cost == 0 ? item.unitary_cost : dto.unitary_cost;
+                    //item.existence = dto.existence;
+                    item.pathimg = dto.pathimg;
+                    context.Entry(item).State = EntityState.Modified;
+                    context.SaveChanges();
+                    flag = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+            }
+            return flag;
+        }
     }
 }

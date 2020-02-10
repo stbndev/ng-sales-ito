@@ -21,8 +21,7 @@ namespace posrepository.DTO
 
         public int quantity { get; set; }
 
-
-
+        public string pathimg { get; set; }
 
     }
 
