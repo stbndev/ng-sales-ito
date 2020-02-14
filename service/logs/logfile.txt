@@ -1,0 +1,3 @@
+2020-02-12 20:26:41.0034 posrepository.ProductsRepository.Update Product Update 1  
+2020-02-12 20:28:26.0557 posrepository.ProductsRepository.Update Product Update 2  
+2020-02-12 20:31:51.5080 posrepository.ProductsRepository.Update Product Update 1003  
