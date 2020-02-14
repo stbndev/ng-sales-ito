@@ -1,0 +1,3 @@
+2020-02-14 12:21:35.6041 posrepository.ProductsRepository.Delete Product:1 cstatus:ELIMINADO 
+2020-02-14 12:23:43.8161 posrepository.ProductsRepository.Delete Product:1 cstatus:ELIMINADO 
+2020-02-14 12:30:36.6381 posrepository.ProductsRepository.Delete Product:1 cstatus:ELIMINADO 

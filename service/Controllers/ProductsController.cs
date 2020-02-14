@@ -129,6 +129,7 @@ namespace service.Controllers
                         break;
                     case Action.DELETE:
                         bool flag = ng.Delete(id);
+                        rm.SetResponse(flag);
                         break;
 
                     default:
