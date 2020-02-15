@@ -1,3 +1,12 @@
 2020-02-12 20:26:41.0034 posrepository.ProductsRepository.Update Product Update 1  
 2020-02-12 20:28:26.0557 posrepository.ProductsRepository.Update Product Update 2  
 2020-02-12 20:31:51.5080 posrepository.ProductsRepository.Update Product Update 1003  
+2020-02-14 18:55:11.6845 posrepository.ProductsRepository.Delete Product:1003 cstatus:ELIMINADO 
+2020-02-14 18:57:41.4885 posrepository.ProductsRepository.Delete Product:2 cstatus:ELIMINADO 
+2020-02-14 19:00:56.7252 posrepository.ProductsRepository.Delete Product:1 cstatus:ELIMINADO 
+2020-02-14 19:08:41.4861 posrepository.ProductsRepository.Delete Product:1003 cstatus:ELIMINADO 
+2020-02-14 19:17:15.0964 posrepository.ProductsRepository.Delete Product:1 cstatus:ELIMINADO 
+2020-02-14 19:37:04.6726 posrepository.ProductsRepository.Delete Product:1003 cstatus:ELIMINADO 
+2020-02-14 19:37:26.5076 posrepository.ProductsRepository.Delete Product:2 cstatus:ELIMINADO 
+2020-02-14 19:51:17.2544 posrepository.ProductsRepository.Delete Product:1003 cstatus:ELIMINADO 
+2020-02-14 19:57:44.4909 posrepository.ProductsRepository.Delete Product:1003 cstatus:ELIMINADO 
