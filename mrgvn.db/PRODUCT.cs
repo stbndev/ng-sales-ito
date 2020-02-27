@@ -12,7 +12,7 @@ namespace mrgvn.db
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public PRODUCT()
         {
-            LOSTITEMDETAILS = new HashSet<LOSTITEMDETAIL>();
+            INVENTORYSHRINKAGEDETAILS = new HashSet<INVENTORYSHRINKAGEDETAIL>();
             PRODUCTENTRYDETAILS = new HashSet<PRODUCTENTRYDETAIL>();
             SALEDETAILS = new HashSet<SALEDETAIL>();
         }
@@ -34,14 +34,14 @@ namespace mrgvn.db
         public decimal unitary_cost { get; set; }
 
         public int existence { get; set; }
-        //TODO: add column pathimg in script for db
-        public string pathimg { get; set; }
 
+        [StringLength(1024)]
+        public string pathimg { get; set; }
 
         public virtual CSTATU CSTATU { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LOSTITEMDETAIL> LOSTITEMDETAILS { get; set; }
+        public virtual ICollection<INVENTORYSHRINKAGEDETAIL> INVENTORYSHRINKAGEDETAILS { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PRODUCTENTRYDETAIL> PRODUCTENTRYDETAILS { get; set; }

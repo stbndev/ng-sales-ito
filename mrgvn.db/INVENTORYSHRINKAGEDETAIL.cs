@@ -6,8 +6,8 @@ namespace mrgvn.db
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("LOSTITEMDETAILS")]
-    public partial class LOSTITEMDETAIL
+    [Table("INVENTORYSHRINKAGEDETAILS")]
+    public partial class INVENTORYSHRINKAGEDETAIL
     {
         public int id { get; set; }
 
@@ -19,7 +19,7 @@ namespace mrgvn.db
 
         public int quantity { get; set; }
 
-        public virtual LOSTITEM LOSTITEM { get; set; }
+        public virtual INVENTORYSHRINKAGE INVENTORYSHRINKAGE { get; set; }
 
         public virtual PRODUCT PRODUCT { get; set; }
     }

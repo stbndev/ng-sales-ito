@@ -14,9 +14,9 @@ namespace service.Controllers
 {
     public class LostItemsController : ApiController
     {
-        private ILostItems ng;
+        private IShrinkage ng;
 
-        public LostItemsController(ILostItems lostItems) { this.ng = lostItems; }
+        public LostItemsController(IShrinkage lostItems) { this.ng = lostItems; }
 
         public HttpResponseMessage Put(int id, [FromBody]LostItemDTO value)
         {
@@ -47,7 +47,7 @@ namespace service.Controllers
         private HttpResponseMessage executeaction(Action action, int id = 0, LostItemDTO value = null)
         {
             ResponseModel rm = new ResponseModel();
-            LOSTITEM result = new LOSTITEM();
+            INVENTORYSHRINKAGE result = new INVENTORYSHRINKAGE();
 
             try
             {

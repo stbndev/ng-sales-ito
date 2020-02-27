@@ -54,8 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSTATU.cs" />
-    <Compile Include="LOSTITEM.cs" />
-    <Compile Include="LOSTITEMDETAIL.cs" />
+    <Compile Include="INVENTORYSHRINKAGE.cs" />
+    <Compile Include="INVENTORYSHRINKAGEDETAIL.cs" />
     <Compile Include="posContext.cs" />
     <Compile Include="PRODUCT.cs" />
     <Compile Include="PRODUCTENTRy.cs" />

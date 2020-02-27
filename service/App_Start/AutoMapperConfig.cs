@@ -36,8 +36,8 @@ namespace service
                 ForMember(x1 => x1.idsales, src1 => src1.MapFrom(x1 => x1.id)).
                 ReverseMap();
 
-                config.CreateMap<LOSTITEM, LostItemDTO>().
-                ForMember(x => x.Itemsdetails, src => src.MapFrom(x => x.LOSTITEMDETAILS)).
+                config.CreateMap<INVENTORYSHRINKAGE, LostItemDTO>().
+                ForMember(x => x.Itemsdetails, src => src.MapFrom(x => x.INVENTORYSHRINKAGEDETAILS)).
                 ReverseMap();
 
 

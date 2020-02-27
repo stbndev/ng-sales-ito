@@ -12,7 +12,7 @@ namespace mrgvn.db
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public CSTATU()
         {
-            LOSTITEMS = new HashSet<LOSTITEM>();
+            INVENTORYSHRINKAGEs = new HashSet<INVENTORYSHRINKAGE>();
             PRODUCTENTRIES = new HashSet<PRODUCTENTRy>();
             PRODUCTS = new HashSet<PRODUCT>();
         }
@@ -32,7 +32,7 @@ namespace mrgvn.db
         public long modification_date { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LOSTITEM> LOSTITEMS { get; set; }
+        public virtual ICollection<INVENTORYSHRINKAGE> INVENTORYSHRINKAGEs { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PRODUCTENTRy> PRODUCTENTRIES { get; set; }

@@ -13,8 +13,8 @@ namespace mrgvn.db
         }
 
         public virtual DbSet<CSTATU> CSTATUS { get; set; }
-        public virtual DbSet<LOSTITEMDETAIL> LOSTITEMDETAILS { get; set; }
-        public virtual DbSet<LOSTITEM> LOSTITEMS { get; set; }
+        public virtual DbSet<INVENTORYSHRINKAGE> INVENTORYSHRINKAGEs { get; set; }
+        public virtual DbSet<INVENTORYSHRINKAGEDETAIL> INVENTORYSHRINKAGEDETAILS { get; set; }
         public virtual DbSet<PRODUCTENTRy> PRODUCTENTRIES { get; set; }
         public virtual DbSet<PRODUCTENTRYDETAIL> PRODUCTENTRYDETAILS { get; set; }
         public virtual DbSet<PRODUCT> PRODUCTS { get; set; }
@@ -32,7 +32,7 @@ namespace mrgvn.db
                 .IsUnicode(false);
 
             modelBuilder.Entity<CSTATU>()
-                .HasMany(e => e.LOSTITEMS)
+                .HasMany(e => e.INVENTORYSHRINKAGEs)
                 .WithRequired(e => e.CSTATU)
                 .HasForeignKey(e => e.idcstatus)
                 .WillCascadeOnDelete(false);
@@ -49,23 +49,23 @@ namespace mrgvn.db
                 .HasForeignKey(e => e.idcstatus)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<LOSTITEMDETAIL>()
-                .Property(e => e.unitary_cost)
-                .HasPrecision(10, 2);
-
-            modelBuilder.Entity<LOSTITEM>()
+            modelBuilder.Entity<INVENTORYSHRINKAGE>()
                 .Property(e => e.total)
                 .HasPrecision(10, 2);
 
-            modelBuilder.Entity<LOSTITEM>()
+            modelBuilder.Entity<INVENTORYSHRINKAGE>()
                 .Property(e => e.maker)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<LOSTITEM>()
-                .HasMany(e => e.LOSTITEMDETAILS)
-                .WithRequired(e => e.LOSTITEM)
+            modelBuilder.Entity<INVENTORYSHRINKAGE>()
+                .HasMany(e => e.INVENTORYSHRINKAGEDETAILS)
+                .WithRequired(e => e.INVENTORYSHRINKAGE)
                 .HasForeignKey(e => e.idlostitems)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<INVENTORYSHRINKAGEDETAIL>()
+                .Property(e => e.unitary_cost)
+                .HasPrecision(10, 2);
 
             modelBuilder.Entity<PRODUCTENTRy>()
                 .Property(e => e.total)
@@ -98,7 +98,11 @@ namespace mrgvn.db
                 .HasPrecision(10, 2);
 
             modelBuilder.Entity<PRODUCT>()
-                .HasMany(e => e.LOSTITEMDETAILS)
+                .Property(e => e.pathimg)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<PRODUCT>()
+                .HasMany(e => e.INVENTORYSHRINKAGEDETAILS)
                 .WithRequired(e => e.PRODUCT)
                 .HasForeignKey(e => e.idproducts)
                 .WillCascadeOnDelete(false);

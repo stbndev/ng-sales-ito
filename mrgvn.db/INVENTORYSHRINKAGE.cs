@@ -6,13 +6,13 @@ namespace mrgvn.db
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("LOSTITEMS")]
-    public partial class LOSTITEM
+    [Table("INVENTORYSHRINKAGE")]
+    public partial class INVENTORYSHRINKAGE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public LOSTITEM()
+        public INVENTORYSHRINKAGE()
         {
-            LOSTITEMDETAILS = new HashSet<LOSTITEMDETAIL>();
+            INVENTORYSHRINKAGEDETAILS = new HashSet<INVENTORYSHRINKAGEDETAIL>();
         }
 
         public int id { get; set; }
@@ -31,6 +31,6 @@ namespace mrgvn.db
         public virtual CSTATU CSTATU { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LOSTITEMDETAIL> LOSTITEMDETAILS { get; set; }
+        public virtual ICollection<INVENTORYSHRINKAGEDETAIL> INVENTORYSHRINKAGEDETAILS { get; set; }
     }
 }

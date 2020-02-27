@@ -67,7 +67,7 @@ namespace posUnitTest
             lost.Itemsdetails.Add(details);
             lost.Itemsdetails.Add(details2);
 
-            ILostItems ctrlSales = new LostItemsRepository();
+            IShrinkage ctrlSales = new ShrinkageRepository();
             var result = ctrlSales.Update(lost);
             Assert.IsTrue(result.id > 0, "OK success");
         }
